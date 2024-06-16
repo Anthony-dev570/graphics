@@ -95,7 +95,7 @@ impl Program {
         unsafe {
             self.bind();
             let name = CString::new(name.to_string()).unwrap();
-            let location = gl::GetUniformLocation(self.id(), &name.as_ptr() as *const _ as *const _);
+            let location = gl::GetUniformLocation(self.id(), name.as_ptr() as *const _ as *const _);
             println!("Location: {}", location);
             uniform.bind_uniform(location);
         }
