@@ -1,7 +1,8 @@
-use std::mem::size_of;
 use std::ptr::null;
 use std::sync::{Arc, Mutex};
-use gl::{DYNAMIC_COPY, STATIC_DRAW};
+
+use gl::STATIC_DRAW;
+
 use crate::atomic_macro;
 use crate::vertex::Vertex;
 
@@ -94,8 +95,6 @@ impl VertexArray {
     }
 
     pub fn set_vertices<V: Vertex>(&self, vertices: &[V], indices: Option<&[u32]>) {
-        /*self.initialize();
-        self.bind();*/
 
         unsafe {
             let (mut vao, mut vbo) = (0, 0);
@@ -106,44 +105,23 @@ impl VertexArray {
             gl::GenBuffers(1, &mut vbo);
             gl::BindBuffer(
                 gl::ARRAY_BUFFER,
-                vbo
+                vbo,
             );
             gl::BufferData(
                 gl::ARRAY_BUFFER,
-                (vertices.len() * size_of::<V>()) as isize,
+                3 * 3 * 4,
                 &vertices.as_ptr() as *const _ as *const _,
-                DYNAMIC_COPY
+                STATIC_DRAW,
             );
 
             gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 3 * 4, null());
             gl::EnableVertexAttribArray(0);
-            //gl::BindBuffer(gl::ARRAY_BUFFER, self.vbo());
-            /*println!("{:?}", size_of::<V>());
-            gl::BufferData(
-                gl::ARRAY_BUFFER,
-                (vertices.len() * size_of::<V>()) as isize,
-                &vertices.as_ptr() as *const _ as *const _,
-                gl::DYNAMIC_DRAW,
-            );*/
 
-            //V::load_attrib_pointers();
-
-            if let Some(indices) = indices {
-                self.initialize_ebo();
-                gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.ebo().unwrap());
-                gl::BufferData(
-                    gl::ELEMENT_ARRAY_BUFFER,
-                    (indices.len() * size_of::<u32>()) as isize,
-                    &indices.as_ptr() as *const _ as *const _,
-                    gl::DYNAMIC_DRAW,
-                );
-            } else {
-                self.uninitialize_ebo();
-            }
-
-            let mut n = self.0.lock().unwrap();
-            n.vao = vao;
-            n.vbo = vbo;
+            *self.0.lock().unwrap() = VertexArrayInner {
+                vao,
+                vbo,
+                ebo: None
+            };
         }
     }
 }
