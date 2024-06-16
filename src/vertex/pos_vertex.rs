@@ -12,8 +12,6 @@ pub struct PositionVertex {
 impl Vertex for PositionVertex {
     fn load_attrib_pointers() {
         unsafe {
-            //gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, (3 * size_of::<f32>()) as i32, null());
-            //gl::EnableVertexAttribArray(0);
             gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 3 * 4, null());
             gl::EnableVertexAttribArray(0);
         }

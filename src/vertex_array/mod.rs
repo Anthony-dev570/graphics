@@ -1,6 +1,7 @@
 use std::mem::size_of;
 use std::ptr::null;
 use std::sync::{Arc, Mutex};
+use gl::{DYNAMIC_COPY, STATIC_DRAW};
 use crate::atomic_macro;
 use crate::vertex::Vertex;
 
@@ -58,7 +59,6 @@ impl VertexArray {
 
     fn initialize(&self) {
         if !self.is_initialized() {
-            println!("Initialize VAO");
             unsafe {
                 let (mut vao, mut vbo) = (0, 0);
 
@@ -94,20 +94,39 @@ impl VertexArray {
     }
 
     pub fn set_vertices<V: Vertex>(&self, vertices: &[V], indices: Option<&[u32]>) {
-        self.initialize();
-        self.bind();
+        /*self.initialize();
+        self.bind();*/
 
         unsafe {
-            gl::BindBuffer(gl::ARRAY_BUFFER, self.vbo());
-            println!("{:?}", size_of::<V>());
+            let (mut vao, mut vbo) = (0, 0);
+
+            gl::GenVertexArrays(1, &mut vao);
+            gl::BindVertexArray(vao);
+
+            gl::GenBuffers(1, &mut vbo);
+            gl::BindBuffer(
+                gl::ARRAY_BUFFER,
+                vbo
+            );
+            gl::BufferData(
+                gl::ARRAY_BUFFER,
+                (vertices.len() * size_of::<V>()) as isize,
+                &vertices.as_ptr() as *const _ as *const _,
+                DYNAMIC_COPY
+            );
+
+            gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 3 * 4, null());
+            gl::EnableVertexAttribArray(0);
+            //gl::BindBuffer(gl::ARRAY_BUFFER, self.vbo());
+            /*println!("{:?}", size_of::<V>());
             gl::BufferData(
                 gl::ARRAY_BUFFER,
                 (vertices.len() * size_of::<V>()) as isize,
                 &vertices.as_ptr() as *const _ as *const _,
                 gl::DYNAMIC_DRAW,
-            );
+            );*/
 
-            V::load_attrib_pointers();
+            //V::load_attrib_pointers();
 
             if let Some(indices) = indices {
                 self.initialize_ebo();
@@ -121,6 +140,10 @@ impl VertexArray {
             } else {
                 self.uninitialize_ebo();
             }
+
+            let mut n = self.0.lock().unwrap();
+            n.vao = vao;
+            n.vbo = vbo;
         }
     }
 }
