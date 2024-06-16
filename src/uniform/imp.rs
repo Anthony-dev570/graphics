@@ -1,0 +1,44 @@
+use mathematics::linear_algebra::matrix::Matrix;
+use mathematics::linear_algebra::vector::types::Vector3;
+use crate::graphics_pointer::GraphicsPointer;
+use crate::uniform::Uniform;
+
+impl Uniform<f32> for Vector3<f32> {
+    fn bind_uniform(&self, location: i32) {
+        unsafe {
+            gl::Uniform3fv(location, 1, self.as_ptr());
+        }
+    }
+}
+
+impl Uniform<i32> for Vector3<i32> {
+    fn bind_uniform(&self, location: i32) {
+        unsafe {
+            gl::Uniform3iv(location, 1, self.as_ptr());
+        }
+    }
+}
+
+impl Uniform<f32> for Matrix<2, 2, f32> {
+    fn bind_uniform(&self, location: i32) {
+        unsafe {
+            gl::UniformMatrix2fv(location, 1, gl::FALSE, self.as_ptr());
+        }
+    }
+}
+
+impl Uniform<f32> for Matrix<3, 3, f32> {
+    fn bind_uniform(&self, location: i32) {
+        unsafe {
+            gl::UniformMatrix3fv(location, 1, gl::FALSE, self.as_ptr());
+        }
+    }
+}
+
+impl Uniform<f32> for Matrix<4, 4, f32> {
+    fn bind_uniform(&self, location: i32) {
+        unsafe {
+            gl::UniformMatrix4fv(location, 1, gl::FALSE, self.as_ptr());
+        }
+    }
+}

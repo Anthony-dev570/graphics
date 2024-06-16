@@ -1,3 +1,4 @@
+use std::ffi::CString;
 use std::sync::{Arc, Mutex};
 
 use crate::atomic_macro;
@@ -5,6 +6,7 @@ use crate::graphics_error::GraphicsError;
 use crate::shader::fragment_shader::FragmentShader;
 use crate::shader::Shader;
 use crate::shader::vertex_shader::VertexShader;
+use crate::uniform::Uniform;
 
 atomic_macro!(
     pub struct Program {
@@ -81,5 +83,20 @@ impl Program {
             return Err(error);
         }
         Ok(out)
+    }
+
+    pub fn bind(&self) {
+        unsafe {
+            gl::UseProgram(self.id());
+        }
+    }
+
+    pub fn bind_uniform<N: ToString, T, U: Uniform<T>>(&self, name: N, uniform: &U) {
+        unsafe {
+            self.bind();
+            let name = CString::new(name).unwrap();
+            let location = gl::GetUniformLocation(self.id(), &name.as_ptr() as *const _ as *const _);
+            uniform.bind_uniform(location);
+        }
     }
 }

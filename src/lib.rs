@@ -4,6 +4,8 @@ pub mod atomic;
 pub mod program;
 pub mod shader;
 pub mod graphics_error;
+pub mod graphics_pointer;
+pub mod uniform;
 
 #[cfg(test)]
 mod tests {
