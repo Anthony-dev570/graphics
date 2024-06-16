@@ -1,3 +1,4 @@
+use std::mem::size_of;
 use std::ptr::null;
 use std::sync::{Arc, Mutex};
 
@@ -31,7 +32,13 @@ impl VertexArray {
         self.vao() != 0
     }
 
-    fn initialize_ebo(&self) {
+    fn initialize_ebo(&self, buffer: Option<&[u32]>) {
+        let (size, ptr) = match buffer {
+            None => (0, null()),
+            Some(buffer) => {
+                ((buffer.len() * 4) as isize, buffer.as_ptr() as *const _ as *const _)
+            }
+        };
         if self.ebo().is_none() {
             unsafe {
                 let mut ebo = 0;
@@ -42,8 +49,8 @@ impl VertexArray {
                 );
                 gl::BufferData(
                     gl::ELEMENT_ARRAY_BUFFER,
-                    0,
-                    null(),
+                    size,
+                    ptr,
                     gl::DYNAMIC_DRAW,
                 );
             }
@@ -87,32 +94,43 @@ impl VertexArray {
     }
 
     pub fn set_vertices<V: Vertex>(&self, vertices: &[V], indices: Option<&[u32]>) {
+        self.initialize();
+        self.bind();
         unsafe {
-            let (mut vao, mut vbo) = (0, 0);
+            let vao = self.vao();
+            let vbo = self.vbo();
 
-            gl::GenVertexArrays(1, &mut vao);
             gl::BindVertexArray(vao);
 
-            gl::GenBuffers(1, &mut vbo);
             gl::BindBuffer(
                 gl::ARRAY_BUFFER,
                 vbo,
             );
             gl::BufferData(
                 gl::ARRAY_BUFFER,
-                3 * 3 * 4,
+                (vertices.len() * size_of::<V>()) as isize,
                 vertices.as_ptr() as *const _ as *const _,
                 STATIC_DRAW,
             );
+            V::load_attrib_pointers();
+            self.set_indices(indices);
+            gl::BindVertexArray(0);
+        }
+    }
 
-            gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 3 * 4, null());
-            gl::EnableVertexAttribArray(0);
-
-            *self.0.lock().unwrap() = VertexArrayInner {
-                vao,
-                vbo,
-                ebo: None
-            };
+    pub fn set_indices(&self, indices: Option<&[u32]>) {
+        unsafe {
+            match indices {
+                None => {
+                    if let Some(ebo) = self.ebo() {
+                        gl::DeleteBuffers(1, &ebo);
+                        self.0.lock().unwrap().ebo = None;
+                    }
+                }
+                Some(indices) => {
+                    self.initialize_ebo(Some(indices));
+                }
+            }
         }
     }
 }
