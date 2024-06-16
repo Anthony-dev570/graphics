@@ -84,7 +84,7 @@ impl VertexArray {
         }
     }
 
-    fn bind(&self) {
+    pub fn bind(&self) {
         unsafe {
             gl::BindVertexArray(self.vao());
         }
