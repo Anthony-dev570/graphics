@@ -50,14 +50,6 @@ impl VertexArray {
         }
     }
 
-    fn uninitialize_ebo(&self) {
-        let mut me = self.0.lock().unwrap();
-        if let Some(ebo) = me.ebo {
-            unsafe { gl::DeleteBuffers(1, &ebo); }
-            me.ebo = None;
-        }
-    }
-
     fn initialize(&self) {
         if !self.is_initialized() {
             unsafe {
@@ -95,7 +87,6 @@ impl VertexArray {
     }
 
     pub fn set_vertices<V: Vertex>(&self, vertices: &[V], indices: Option<&[u32]>) {
-
         unsafe {
             let (mut vao, mut vbo) = (0, 0);
 
@@ -110,7 +101,7 @@ impl VertexArray {
             gl::BufferData(
                 gl::ARRAY_BUFFER,
                 3 * 3 * 4,
-                &vertices.as_ptr() as *const _ as *const _,
+                vertices.as_ptr() as *const _ as *const _,
                 STATIC_DRAW,
             );
 
