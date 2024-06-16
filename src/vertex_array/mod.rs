@@ -59,17 +59,17 @@ impl VertexArray {
     fn initialize(&self) {
         if !self.is_initialized() {
             unsafe {
-                let mut vao = 0;
-                gl::GenVertexArrays(1, &mut vao);
+                let (mut vao, mut vbo) = (0, 0);
 
+                gl::GenVertexArrays(1, &mut vao);
                 gl::BindVertexArray(vao);
 
-                let mut vbo = 0;
                 gl::GenBuffers(1, &mut vbo);
                 gl::BindBuffer(
                     gl::ARRAY_BUFFER,
                     vbo,
                 );
+
                 gl::BufferData(
                     gl::ARRAY_BUFFER,
                     0,
@@ -77,7 +77,9 @@ impl VertexArray {
                     gl::DYNAMIC_DRAW,
                 );
                 gl::BindVertexArray(0);
+
                 let mut t = self.0.lock().unwrap();
+
                 t.vao = vao;
                 t.vbo = vbo;
             }
@@ -93,16 +95,18 @@ impl VertexArray {
     pub fn set_vertices<V: Vertex>(&self, vertices: &[V], indices: Option<&[u32]>) {
         self.initialize();
         self.bind();
-        V::load_attrib_pointers();
 
         unsafe {
             gl::BindBuffer(gl::ARRAY_BUFFER, self.vbo());
+            println!("{:?}", size_of::<V>());
             gl::BufferData(
                 gl::ARRAY_BUFFER,
                 (vertices.len() * size_of::<V>()) as isize,
                 &vertices.as_ptr() as *const _ as *const _,
                 gl::DYNAMIC_DRAW,
             );
+
+            V::load_attrib_pointers();
 
             if let Some(indices) = indices {
                 self.initialize_ebo();
