@@ -94,7 +94,7 @@ impl Program {
     pub fn bind_uniform<N: ToString, T, U: Uniform<T>>(&self, name: N, uniform: &U) {
         unsafe {
             self.bind();
-            let name = CString::new(name).unwrap();
+            let name = CString::new(name.to_string()).unwrap();
             let location = gl::GetUniformLocation(self.id(), &name.as_ptr() as *const _ as *const _);
             uniform.bind_uniform(location);
         }
