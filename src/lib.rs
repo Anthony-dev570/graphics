@@ -1,7 +1,9 @@
 pub mod vertex;
 pub mod vertex_array;
 pub mod atomic;
-
+pub mod program;
+pub mod shader;
+pub mod graphics_error;
 
 #[cfg(test)]
 mod tests {
