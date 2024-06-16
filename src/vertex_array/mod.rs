@@ -58,6 +58,7 @@ impl VertexArray {
 
     fn initialize(&self) {
         if !self.is_initialized() {
+            println!("Initialize VAO");
             unsafe {
                 let (mut vao, mut vbo) = (0, 0);
 
