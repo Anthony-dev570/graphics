@@ -58,3 +58,31 @@ impl Uniform<i32> for Vector2<i32> {
         }
     }
 }
+
+impl GraphicsPointer<i32> for i32 {
+    fn as_ptr(&self) -> *const i32 {
+        self as *const _
+    }
+}
+
+impl Uniform<i32> for i32 {
+    fn bind_uniform(&self, location: i32) {
+        unsafe {
+            gl::Uniform1i(location, *self);
+        }
+    }
+}
+
+impl GraphicsPointer<f32> for f32 {
+    fn as_ptr(&self) -> *const f32 {
+        self as *const _
+    }
+}
+
+impl Uniform<f32> for f32 {
+    fn bind_uniform(&self, location: i32) {
+        unsafe {
+            gl::Uniform1f(location, *self);
+        }
+    }
+}
