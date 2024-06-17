@@ -9,3 +9,5 @@ edition = "2021"
 mathematics = { git = "https://github.com/Anthony-dev570/mathematics.git" }
 paste = "*"
 gl = "*"
+maplit = "*"
+freetype-rs = { version = "*", features = ["bundled"] }

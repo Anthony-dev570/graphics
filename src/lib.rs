@@ -6,6 +6,7 @@ pub mod shader;
 pub mod graphics_error;
 pub mod graphics_pointer;
 pub mod uniform;
+pub mod font;
 
 #[cfg(test)]
 mod tests {

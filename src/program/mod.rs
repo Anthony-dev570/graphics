@@ -57,9 +57,9 @@ impl Program {
         unsafe {
             let id = self.id();
 
-            match VertexShader::new(vertex_shader) {
+            match VertexShader::new_from_src(vertex_shader) {
                 Ok(vertex) => {
-                    match FragmentShader::new(fragment_shader) {
+                    match FragmentShader::new_from_src(fragment_shader) {
                         Ok(fragment) => {
                             gl::AttachShader(id, vertex.id());
                             gl::AttachShader(id, fragment.id());
@@ -75,7 +75,7 @@ impl Program {
         None
     }
 
-    pub fn new<V: ToString, F: ToString>(
+    pub fn new_from_src<V: ToString, F: ToString>(
         vertex_shader: V,
         fragment_shader: F,
     ) -> Result<Self, GraphicsError> {
