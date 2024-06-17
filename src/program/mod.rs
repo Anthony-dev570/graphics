@@ -92,7 +92,7 @@ impl Program {
         }
     }
 
-    pub fn bind_uniform<N: ToString, T, U: Uniform<T>>(&self, name: N, uniform: &U) {
+    pub fn bind_uniform<N: ToString, T, U: Uniform<T>>(&self, name: N, uniform: U) {
         unsafe {
             self.bind();
             let name = CString::new(name.to_string()).unwrap();

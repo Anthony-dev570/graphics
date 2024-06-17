@@ -4,4 +4,10 @@ pub mod imp;
 
 pub trait Uniform<T>: GraphicsPointer<T> {
     fn bind_uniform(&self, location: i32);
+
+    fn enable_logging(logging: bool) {
+        unsafe {
+            imp::LOGGING = logging;
+        }
+    }
 }
