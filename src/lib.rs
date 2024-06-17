@@ -14,6 +14,5 @@ mod tests {
     #[test]
     fn it_works() {
         let a = VertexArray::default();
-
     }
 }

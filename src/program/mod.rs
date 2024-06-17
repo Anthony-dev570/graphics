@@ -1,5 +1,6 @@
 use std::ffi::CString;
 use std::sync::{Arc, Mutex};
+use crate::atomic::Atomic;
 
 use crate::atomic_macro;
 use crate::graphics_error::GraphicsError;
@@ -94,6 +95,16 @@ impl Program {
     pub fn bind_uniform<N: ToString, T, U: Uniform<T>>(&self, name: N, uniform: &U) {
         unsafe {
             self.bind();
+            let name = CString::new(name.to_string()).unwrap();
+            let location = gl::GetUniformLocation(self.id(), name.as_ptr() as *const _ as *const _);
+            uniform.bind_uniform(location);
+        }
+    }
+
+    pub fn bind_atomic_uniform<N: ToString, T, U: Uniform<T>>(&self, name: N, uniform: Atomic<U>) {
+        unsafe {
+            self.bind();
+            let uniform = uniform.0.lock().unwrap();
             let name = CString::new(name.to_string()).unwrap();
             let location = gl::GetUniformLocation(self.id(), name.as_ptr() as *const _ as *const _);
             uniform.bind_uniform(location);

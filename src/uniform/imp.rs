@@ -38,7 +38,8 @@ impl Uniform<f32> for Matrix<3, 3, f32> {
 impl Uniform<f32> for Matrix<4, 4, f32> {
     fn bind_uniform(&self, location: i32) {
         unsafe {
-            gl::UniformMatrix4fv(location, 1, gl::FALSE, self.as_ptr());
+            let ptr = self.as_ptr();
+            gl::UniformMatrix4fv(location, 1, gl::FALSE, ptr);
         }
     }
 }
@@ -46,7 +47,8 @@ impl Uniform<f32> for Matrix<4, 4, f32> {
 impl Uniform<f32> for Vector2<f32> {
     fn bind_uniform(&self, location: i32) {
         unsafe {
-            gl::Uniform2fv(location, 1, self.as_ptr());
+            let ptr = self.as_ptr();
+            gl::Uniform2fv(location, 1, ptr);
         }
     }
 }
