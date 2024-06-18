@@ -60,6 +60,8 @@ impl Font {
 
             let scale = font_size / self.render_size() as f32;
 
+            println!("Scale: {}", scale);
+
             for c in text.to_string().chars() {
                 let glyph = &characters.characters[&c];
 
