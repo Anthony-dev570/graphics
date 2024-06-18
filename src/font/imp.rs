@@ -52,6 +52,8 @@ impl Font {
 
         unsafe {
             gl::ActiveTexture(gl::TEXTURE0);
+            gl::Enable(gl::BLEND);
+            gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
             vao.bind();
 
             let characters = self.get_characters(font_type)?;
