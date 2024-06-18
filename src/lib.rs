@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 pub mod vertex;
 pub mod vertex_array;
 pub mod atomic;
@@ -10,13 +12,15 @@ pub mod font;
 pub mod texture;
 pub mod a_or_b;
 pub mod model;
+pub mod bundled_model;
+pub mod bundled_mesh;
+pub mod ui;
 
 #[cfg(test)]
 mod tests {
-    use crate::vertex_array::VertexArray;
 
     #[test]
     fn it_works() {
-        let _a = VertexArray::default();
+
     }
 }
