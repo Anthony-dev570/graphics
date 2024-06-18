@@ -97,7 +97,9 @@ impl Font {
                     },
                 ];
 
-                println!("{:?}", vertices);
+                let v = vertices.iter().map(|v| v.position).collect::<Vec<Vector2F32>>();
+
+                println!("{:?}", v);
 
                 glyph.texture().bind();
                 vao.set_vertices(&vertices, None);
