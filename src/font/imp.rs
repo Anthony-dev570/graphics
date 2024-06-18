@@ -148,7 +148,7 @@ impl Font {
                         println!("Finished loading char: [{} => {}]", i, i as u8 as char);
                     }
 
-                    println!("Loaded all glyphs.");
+                    println!("Loaded all glyphs: {}", characters.len());
 
                     fonts.insert(*k, FontInfo {
                         characters,
