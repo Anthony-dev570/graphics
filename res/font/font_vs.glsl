@@ -1,6 +1,6 @@
 #version 330 core
 
-layout (location = 0) in vec2 vertex;// <vec2 pos, vec2 tex>
+layout (location = 0) in vec2 vertex;
 layout (location = 1) in vec2 uvs;
 
 out vec2 TexCoords;
