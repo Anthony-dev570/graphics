@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::mem::size_of;
 use std::path::Path;
 use std::ptr::null;
 
@@ -14,8 +13,6 @@ use crate::font::font_type::FontType;
 use crate::font::glyph::Glyph;
 use crate::graphics_error::GraphicsError;
 use crate::program::Program;
-use crate::vertex::pos2_uv::Position2Uv;
-use crate::vertex_array::VertexArray;
 
 static mut LIBRARY: Option<Library> = None;
 //static mut VAO_PROGRAM: Option<(VertexArray, Program)> = None;
@@ -44,10 +41,23 @@ impl Font {
         }
     }
 
+    pub fn text_width<T: ToString>(&self, text: T, font_type: FontType, font_size: f32) -> f32 {
+        let scale = font_size / self.render_size() as f32;
+
+        let mut x = 0_f32;
+        let characters = self.get_characters(font_type)?;
+
+        for c in text.to_string().chars() {
+            let glyph = &characters.characters[&c];
+
+            x += (glyph.advance() >> 6) as f32 * scale;
+        }
+
+        x
+    }
+
     pub fn render_text<T: ToString>(&self, text: T, font_type: FontType, position: Vector2F32, font_size: f32, color: Vector3F32, projection: &Mat4F32) -> Option<()> {
         let (mut x, y) = (position[0], position[1]);
-
-        println!("{:?}", (x, y));
 
         let (vao, vbo, program) = Self::load_vao_and_program();
 
@@ -64,8 +74,6 @@ impl Font {
             let characters = self.get_characters(font_type)?;
 
             let scale = font_size / self.render_size() as f32;
-
-            println!("Scale: {}", scale);
 
             for c in text.to_string().chars() {
                 let glyph = &characters.characters[&c];
