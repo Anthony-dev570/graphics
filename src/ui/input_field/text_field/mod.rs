@@ -11,4 +11,5 @@ pub struct TextFieldInner {
     size: Vector2F32
 }
 
+#[derive(Clone)]
 pub struct TextField(Atomic<TextFieldInner>);

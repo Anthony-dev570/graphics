@@ -41,6 +41,14 @@ impl UI for TextField {
     fn position(&self) -> Vector2F32 {
         self.0.0.lock().unwrap().position
     }
+
+    fn set_position(&self, position: Vector2F32) {
+        self.0.0.lock().unwrap().position = position;
+    }
+
+    fn set_size(&self, size: Vector2F32) {
+        self.0.0.lock().unwrap().size = size;
+    }
 }
 
 impl InputField<String> for TextField {

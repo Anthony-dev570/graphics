@@ -10,6 +10,9 @@ pub trait UI {
     fn size(&self) -> Vector2F32;
     fn position(&self) -> Vector2F32;
 
+    fn set_position(&self, position: Vector2F32);
+    fn set_size(&self, size: Vector2F32);
+
     fn build_rect(position: Vector2F32, size: Vector2F32) -> [Position2Uv; 4] {
         let (x, y) = (position[0], position[1]);
         let (w, h) = (size[0], size[1]);
