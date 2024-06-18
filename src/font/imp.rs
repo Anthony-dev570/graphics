@@ -97,6 +97,8 @@ impl Font {
                     },
                 ];
 
+                println!("{:?}", vertices);
+
                 glyph.texture().bind();
                 vao.set_vertices(&vertices, None);
 
