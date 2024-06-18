@@ -145,7 +145,7 @@ impl Font {
                     for i in 0..128 {
                         let glyph = Glyph::load(&face, i)?;
                         characters.insert(i as u8 as char, glyph);
-                        println!("Finished loading char: [{} => {}]", i, i as u8 as char);
+                        println!("Finished loading char: [{} => {:?}]", i, i as u8 as char);
                     }
 
                     println!("Loaded all glyphs: {}", characters.len());
