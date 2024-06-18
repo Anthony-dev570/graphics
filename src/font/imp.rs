@@ -1,8 +1,10 @@
 use std::collections::HashMap;
+use std::mem::size_of;
 use std::path::Path;
+use std::ptr::null;
 
 use freetype::Library;
-use gl::TEXTURE_2D;
+use gl::{DYNAMIC_DRAW, TEXTURE_2D};
 use mathematics::linear_algebra::matrix::types::Mat4F32;
 use mathematics::linear_algebra::vector::types::{Vector2F32, Vector3F32};
 
@@ -16,7 +18,8 @@ use crate::vertex::pos2_uv::Position2Uv;
 use crate::vertex_array::VertexArray;
 
 static mut LIBRARY: Option<Library> = None;
-static mut VAO_PROGRAM: Option<(VertexArray, Program)> = None;
+//static mut VAO_PROGRAM: Option<(VertexArray, Program)> = None;
+static mut VAO_PROGRAM: Option<(u32, u32, Program)> = None;
 
 const VERTEX_SHADER: &'static str = include_str!("../../res/font/font_vs.glsl");
 const FRAGMENT_SHADER: &'static str = include_str!("../../res/font/font_fs.glsl");
@@ -44,7 +47,9 @@ impl Font {
     pub fn render_text<T: ToString>(&self, text: T, font_type: FontType, position: Vector2F32, font_size: f32, color: Vector3F32, projection: &Mat4F32) -> Option<()> {
         let (mut x, y) = (position[0], position[1]);
 
-        let (vao, program) = Self::load_vao_and_program();
+        println!("{:?}", (x, y));
+
+        let (vao, vbo, program) = Self::load_vao_and_program();
 
         program.bind();
         program.bind_uniform("textColor", color);
@@ -54,7 +59,7 @@ impl Font {
             gl::ActiveTexture(gl::TEXTURE0);
             gl::Enable(gl::BLEND);
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
-            vao.bind();
+            gl::BindVertexArray(*vao);
 
             let characters = self.get_characters(font_type)?;
 
@@ -72,39 +77,20 @@ impl Font {
                 let h = glyph.size()[1] as f32 * scale;
 
                 let vertices = [
-                    Position2Uv {
-                        position: Vector2F32::new([x_pos, y_pos + h]),
-                        uv: Default::default(),
-                    },
-                    Position2Uv {
-                        position: Vector2F32::new([x_pos, y_pos]),
-                        uv: Vector2F32::new([0_f32, 1_f32]),
-                    },
-                    Position2Uv {
-                        position: Vector2F32::new([x_pos + w, y_pos]),
-                        uv: Vector2F32::new([1_f32; 2]),
-                    },
-
-                    Position2Uv {
-                        position: Vector2F32::new([x_pos, y_pos + h]),
-                        uv: Vector2F32::new([0_f32; 2]),
-                    },
-                    Position2Uv {
-                        position: Vector2F32::new([x_pos + w, y_pos]),
-                        uv: Vector2F32::new([1_f32; 2]),
-                    },
-                    Position2Uv {
-                        position: Vector2F32::new([x_pos + w, y_pos + h]),
-                        uv: Vector2F32::new([1_f32, 0_f32]),
-                    },
+                    [x_pos, y_pos + h, 0_f32, 0_f32],
+                    [x_pos, y_pos, 0_f32, 1_f32],
+                    [x_pos + w, y_pos, 1_f32, 1_f32],
+                    [x_pos, y_pos + h, 0_f32, 0_f32],
+                    [x_pos + w, y_pos, 1_f32, 1_f32],
+                    [x_pos + w, y_pos + h, 1_f32, 0_f32]
                 ];
 
-                let v = vertices.iter().map(|v| v.position).collect::<Vec<Vector2F32>>();
-
-                println!("{:?}", v);
 
                 glyph.texture().bind();
-                vao.set_vertices(&vertices, None);
+                gl::BindBuffer(gl::ARRAY_BUFFER, *vbo);
+                gl::BufferSubData(gl::ARRAY_BUFFER, 0, 6 * 4 * 4, &vertices[0][0] as *const _ as *const _);
+                gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+                //vao.set_vertices(&vertices, None);
 
                 gl::DrawArrays(gl::TRIANGLES, 0, 6);
 
@@ -174,15 +160,24 @@ impl Font {
         Ok(())
     }
 
-    fn load_vao_and_program() -> &'static (VertexArray, Program) {
+    fn load_vao_and_program() -> &'static (u32, u32, Program) {
         unsafe {
             if let Some(out) = &VAO_PROGRAM {
                 return out;
             } else {
                 let program = Program::new_from_src(VERTEX_SHADER, FRAGMENT_SHADER).unwrap();
-                let vao = VertexArray::default();
-                vao.set_vertices::<Position2Uv>(&[], None);
-                VAO_PROGRAM = Some((vao, program));
+
+                let (mut vao, mut vbo) = (0, 0);
+                gl::GenVertexArrays(1, &mut vao);
+                gl::GenBuffers(1, &mut vbo);
+                gl::BindVertexArray(vao);
+                gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+                gl::BufferData(gl::ARRAY_BUFFER, 4 * 6 * 4, null(), DYNAMIC_DRAW);
+                gl::EnableVertexAttribArray(0);
+                gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 4 * 4, null());
+                gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+
+                VAO_PROGRAM = Some((vao, vbo, program));
                 Self::load_vao_and_program()
             }
         }
