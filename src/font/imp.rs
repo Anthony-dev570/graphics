@@ -41,7 +41,7 @@ impl Font {
         }
     }
 
-    pub fn text_width<T: ToString>(&self, text: T, font_type: FontType, font_size: f32) -> f32 {
+    pub fn text_width<T: ToString>(&self, text: T, font_type: FontType, font_size: f32) -> Option<f32> {
         let scale = font_size / self.render_size() as f32;
 
         let mut x = 0_f32;
@@ -53,7 +53,7 @@ impl Font {
             x += (glyph.advance() >> 6) as f32 * scale;
         }
 
-        x
+        Some(x)
     }
 
     pub fn render_text<T: ToString>(&self, text: T, font_type: FontType, position: Vector2F32, font_size: f32, color: Vector3F32, projection: &Mat4F32) -> Option<()> {
