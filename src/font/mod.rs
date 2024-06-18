@@ -8,11 +8,12 @@ pub mod glyph;
 pub mod font_type;
 
 pub struct FontInner {
-    render_font_size: i32,
+    render_font_size: u32,
     name: String,
-    fonts: HashMap<FontType, FontInner>,
+    fonts: HashMap<FontType, FontInfo>,
 }
 
+#[derive(Clone)]
 pub struct FontInfo {
     characters: HashMap<char, Glyph>,
     path: String,
@@ -22,7 +23,7 @@ pub enum FontHandler {
     Uninitialized {
         name: String,
         font_types: HashMap<FontType, String>,
-        render_font_size: i32
+        render_font_size: u32
     },
     Initialized(FontInner)
 }

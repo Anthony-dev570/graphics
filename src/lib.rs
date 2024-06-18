@@ -7,6 +7,9 @@ pub mod graphics_error;
 pub mod graphics_pointer;
 pub mod uniform;
 pub mod font;
+pub mod texture;
+pub mod a_or_b;
+pub mod model;
 
 #[cfg(test)]
 mod tests {
@@ -14,6 +17,6 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let a = VertexArray::default();
+        let _a = VertexArray::default();
     }
 }
