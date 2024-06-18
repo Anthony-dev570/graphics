@@ -138,11 +138,13 @@ impl Font {
 
                     let mut characters = HashMap::new();
 
-                    for i in 32..128 {
+                    for i in 32..127 {
                         let glyph = Glyph::load(&face, i)?;
                         characters.insert(i as u8 as char, glyph);
                         println!("Finished loading char: [{} => {}]", i, i as u8 as char);
                     }
+
+                    println!("Loaded all glyphs.");
 
                     fonts.insert(*k, FontInfo {
                         characters,
