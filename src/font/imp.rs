@@ -3,6 +3,7 @@ use std::path::Path;
 
 use freetype::Library;
 use gl::TEXTURE_2D;
+use mathematics::linear_algebra::matrix::types::Mat4F32;
 use mathematics::linear_algebra::vector::types::{Vector2F32, Vector3F32};
 
 use crate::atomic::Atomic;
@@ -40,13 +41,14 @@ impl Font {
         }
     }
 
-    pub fn render_text<T: ToString>(&self, text: T, font_type: FontType, position: Vector2F32, font_size: f32, color: Vector3F32) -> Option<()> {
+    pub fn render_text<T: ToString>(&self, text: T, font_type: FontType, position: Vector2F32, font_size: f32, color: Vector3F32, projection: &Mat4F32) -> Option<()> {
         let (mut x, y) = (position[0], position[1]);
 
         let (vao, program) = Self::load_vao_and_program();
 
         program.bind();
         program.bind_uniform("textColor", color);
+        program.bind_uniform("projection", *projection);
 
         unsafe {
             gl::ActiveTexture(gl::TEXTURE0);
