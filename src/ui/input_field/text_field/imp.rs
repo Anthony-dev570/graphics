@@ -43,7 +43,7 @@ impl TextField {
                 let expr = aftermath::Expr::parse(&mut bump, &buffer, &[]).unwrap();
                 let e = ctx.eval(expr).unwrap();
 
-                self.0.0.lock().unwrap().buffer = e.to_string();
+                self.0.0.lock().unwrap().buffer = e.norm().to_string();
             }
         }
     }
@@ -67,7 +67,7 @@ impl UI for TextField {
         self.0.0.lock().unwrap().id
     }
 
-    fn process_click(&self, point: Vector2F32, mouse_button: u32) {
+    fn process_click(&self, _point: Vector2F32, _mouse_button: u32) {
         self.0.0.lock().unwrap().has_error = false;
     }
 
@@ -111,7 +111,7 @@ impl UI for TextField {
                             }
                             TextFilter::Alphanumeric => char.is_alphanumeric(),
                             TextFilter::AlphaOnly => char.is_alphabetic(),
-                            TextFilter::Algebraic => char.is_numeric() || ['.', '/', '+', '-', '*'].contains(&char)
+                            TextFilter::Algebraic => char.is_numeric() || ['.', '/', '+', '-', '*', '(', ')', '{', '}', '[', ']'].contains(&char)
                         };
 
                         if add {

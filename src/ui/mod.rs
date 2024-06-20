@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-use std::sync::MutexGuard;
 use mathematics::linear_algebra::matrix::types::Mat4F32;
 use mathematics::linear_algebra::vector::types::{Vector2, Vector2F32};
 
@@ -57,12 +55,10 @@ pub fn process_mouse_click(
 
 pub fn process_key(
     key: u32,
-    action: u32
+    action: u32,
 ) {
-    unsafe {
-        if let Some(s) = get_focused() {
-            s.process_key(key, action);
-        }
+    if let Some(s) = get_focused() {
+        s.process_key(key, action);
     }
 }
 
@@ -79,13 +75,9 @@ pub trait UI {
     fn size(&self) -> Vector2F32;
     fn position(&self) -> Vector2F32;
 
-    fn process_click(&self, point: Vector2F32, mouse_button: u32) {
+    fn process_click(&self, _point: Vector2F32, _mouse_button: u32) {}
 
-    }
-
-    fn process_key(&self, key: u32, action: u32) {
-
-    }
+    fn process_key(&self, _key: u32, _action: u32) {}
 
     fn contains_point(&self, v: Vector2F32) -> bool {
         let (x, y) = {
@@ -121,7 +113,10 @@ pub trait UI {
         false
     }
 
-    fn build_rect3d(position: Vector2F32, size: Vector2F32) -> [PositionUvVertex; 4] where Self: Sized {
+    fn build_rect3d(position: Vector2F32, size: Vector2F32) -> [PositionUvVertex; 4]
+    where
+        Self: Sized,
+    {
         let (x, y) = (position[0], position[1]);
         let (w, h) = (size[0], size[1]);
         let position = Vector3::new([x, y, 0_f32]);
@@ -145,7 +140,10 @@ pub trait UI {
         ]
     }
 
-    fn build_rect(position: Vector2F32, size: Vector2F32) -> [Position2Uv; 4] where Self: Sized {
+    fn build_rect(position: Vector2F32, size: Vector2F32) -> [Position2Uv; 4]
+    where
+        Self: Sized,
+    {
         let (x, y) = (position[0], position[1]);
         let (w, h) = (size[0], size[1]);
         [

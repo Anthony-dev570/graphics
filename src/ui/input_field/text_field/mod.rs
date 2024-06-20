@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use mathematics::linear_algebra::vector::types::Vector2F32;
 use crate::atomic::Atomic;
 use crate::font::Font;
