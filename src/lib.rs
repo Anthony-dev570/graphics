@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 pub mod vertex;
 pub mod vertex_array;
 pub mod atomic;
@@ -18,9 +16,16 @@ pub mod ui;
 
 #[cfg(test)]
 mod tests {
+    use bumpalo::Bump;
 
     #[test]
     fn it_works() {
+        let expression = "5  * 4";
 
+        let ctx = aftermath::Context::new();
+        let mut bump = Bump::new();
+        let expr = aftermath::Expr::parse(&mut bump, expression, &[]).unwrap();
+        let e = ctx.eval(expr).unwrap();
+        println!("{:?}", e.norm());
     }
 }

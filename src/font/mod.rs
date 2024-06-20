@@ -7,6 +7,7 @@ pub mod imp;
 pub mod glyph;
 pub mod font_type;
 
+#[allow(dead_code)]
 pub struct FontInner {
     render_font_size: u32,
     name: String,
@@ -14,6 +15,7 @@ pub struct FontInner {
 }
 
 #[derive(Clone)]
+#[allow(dead_code)]
 pub struct FontInfo {
     characters: HashMap<char, Glyph>,
     path: String,

@@ -5,6 +5,7 @@ use crate::vertex::Vertex;
 pub mod mesh;
 pub mod imp;
 
+#[allow(dead_code)]
 pub struct ModelInner<V: Vertex> {
     meshes: Vec<Mesh<V>>,
     name: Option<String>,

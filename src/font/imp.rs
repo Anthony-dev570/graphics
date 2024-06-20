@@ -129,7 +129,7 @@ impl Font {
     pub fn initialize(&self) -> Result<(), GraphicsError> {
         let mut ptr = self.0.0.lock().unwrap();
         if let FontHandler::Uninitialized { name, font_types, render_font_size } = &*ptr {
-            println!("Begin loading font {name}.");
+            //println!("Begin loading font {name}.");
             let mut fonts = HashMap::new();
 
             unsafe {
@@ -145,10 +145,10 @@ impl Font {
                     for i in 0..128 {
                         let glyph = Glyph::load(&face, i)?;
                         characters.insert(i as u8 as char, glyph);
-                        println!("Finished loading char: [{} => {:?}]", i, i as u8 as char);
+                        //println!("Finished loading char: [{} => {:?}]", i, i as u8 as char);
                     }
 
-                    println!("Loaded all glyphs: {}", characters.len());
+                    //println!("Loaded all glyphs: {}", characters.len());
 
                     fonts.insert(*k, FontInfo {
                         characters,
@@ -163,7 +163,7 @@ impl Font {
                 fonts,
             });
 
-            println!("Assigned font inner.");
+            //println!("Assigned font inner.");
         }
         Ok(())
     }

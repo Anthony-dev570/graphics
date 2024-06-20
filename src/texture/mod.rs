@@ -31,6 +31,7 @@ pub enum TextureType {
     Texture2D = TEXTURE_2D
 }
 
+#[allow(dead_code)]
 pub struct TextureInner {
     ptr: u32,
     texture_settings: TextureSettings,

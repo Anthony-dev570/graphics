@@ -12,3 +12,5 @@ gl = "*"
 maplit = "*"
 freetype-rs = { version = "*", features = ["bundled"] }
 image = "0.24.0"
+aftermath = "*"
+bumpalo = "*"
