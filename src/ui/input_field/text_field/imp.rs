@@ -38,6 +38,9 @@ impl TextField {
         if let Some(filter) = self.filter() {
             if filter == TextFilter::Algebraic {
                 let buffer = self.buffer();
+                if buffer.is_empty() {
+                    return;
+                }
                 let ctx = aftermath::Context::new();
                 let mut bump = Bump::new();
                 let expr = aftermath::Expr::parse(&mut bump, &buffer, &[]).unwrap();
