@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 mathematics = { git = "https://github.com/Anthony-dev570/mathematics.git" }
+lazy = { git = "https://github.com/Anthony-dev570/lazy.git" }
 paste = "*"
 gl = "*"
 maplit = "*"

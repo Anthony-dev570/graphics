@@ -7,12 +7,13 @@ pub mod graphics_error;
 pub mod graphics_pointer;
 pub mod uniform;
 pub mod font;
-pub mod texture;
+pub mod textures;
 pub mod a_or_b;
 pub mod model;
 pub mod bundled_model;
 pub mod bundled_mesh;
 pub mod ui;
+pub mod ffi;
 
 #[cfg(test)]
 mod tests {

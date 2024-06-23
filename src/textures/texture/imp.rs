@@ -1,60 +1,10 @@
-use std::collections::HashMap;
 use gl::TEXTURE_2D;
-use image::{DynamicImage, ImageResult};
+use image::ImageResult;
 use crate::atomic::Atomic;
-
-pub enum ImageObject {
-    Path(String),
-    Image(DynamicImage),
-    Raw {
-        width: i32,
-        height: i32,
-        pixels: Vec<u8>
-    }
-}
-
-impl ImageObject {
-    pub fn to_image(self) -> ImageResult<DynamicImage> {
-        match self {
-            ImageObject::Path(path) => {
-                image::open(path)
-            }
-            ImageObject::Image(image) => Ok(image),
-            _ => panic!("Not an image type.")
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-#[repr(u32)]
-pub enum TextureType {
-    Texture2D = TEXTURE_2D
-}
-
-#[allow(dead_code)]
-pub struct TextureInner {
-    ptr: u32,
-    texture_settings: TextureSettings,
-    texture_type: TextureType
-}
-
-#[derive(Debug, Clone, Default)]
-#[repr(u32)]
-pub enum TextureColor {
-    #[default]
-    Rgb = gl::RGB,
-    Rgba = gl::RGBA,
-    Red = gl::RED,
-}
-
-#[derive(Default, Clone)]
-pub struct TextureSettings {
-    pub parameters: HashMap<u32, i32>,
-    pub texture_color: TextureColor,
-}
-
-#[derive(Clone)]
-pub struct Texture(Atomic<Option<TextureInner>>);
+use crate::textures::image_object::ImageObject;
+use crate::textures::texture::{Texture, TextureInner, TextureSettings};
+use crate::textures::texture_color::TextureColor;
+use crate::textures::texture_type::TextureType;
 
 impl Texture {
     pub fn new(

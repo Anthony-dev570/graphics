@@ -7,8 +7,10 @@ use mathematics::linear_algebra::vector::types::Vector2I32;
 
 use crate::a_or_b::AOrB;
 use crate::graphics_error::GraphicsError;
-use crate::texture::{ImageObject, Texture, TextureSettings};
-use crate::texture::TextureColor::Red;
+use crate::textures::image_object::ImageObject;
+use crate::textures::texture::Texture;
+use crate::textures::texture_color::TextureColor::Red;
+use crate::textures::texture_settings::TextureSettings;
 
 static mut GLYPH_PARAMS: AOrB<&'static [(u32, i32)], HashMap<u32, i32>> = AOrB::A(&[
     (TEXTURE_WRAP_S, CLAMP_TO_EDGE as i32),
