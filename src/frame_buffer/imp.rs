@@ -18,6 +18,12 @@ impl FrameBuffer {
         }
     }
 
+    pub fn unbind(&self) {
+        unsafe {
+            gl::BindFramebuffer(gl::FRAMEBUFFER, 0);
+        }
+    }
+
     pub fn initialize(&self) {
         self.0.0.lock().unwrap().initialize()
     }
