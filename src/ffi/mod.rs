@@ -11,3 +11,19 @@ pub fn bind_cube_map(texture_id: u32) {
         gl::BindTexture(gl::TEXTURE_CUBE_MAP, texture_id)
     }
 }
+
+pub fn gen_frame_buffer() -> u32 {
+    unsafe {
+        let mut fbo = 0;
+        gl::GenFramebuffers(1, &mut fbo);
+        fbo
+    }
+}
+
+pub fn gen_render_buffer() -> u32 {
+    unsafe {
+        let mut rbo = 0;
+        gl::GenRenderbuffers(1, &mut rbo);
+        rbo
+    }
+}

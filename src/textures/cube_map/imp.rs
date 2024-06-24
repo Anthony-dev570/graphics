@@ -23,29 +23,27 @@ impl CubeMap {
             let texture_id = gen_texture();
             bind_cube_map(texture_id);
 
-            unsafe {
-                for (id, face) in lazy.textures.images().iter().enumerate() {
-                    let (width, height, pixels) = face.extract(texture_settings.texture_color.clone());
 
-                    let internal_color = texture_settings.clone().texture_color as u32 as i32;
+            for (id, face) in lazy.textures.images().iter().enumerate() {
+                let (width, height, pixels) = face.extract(texture_settings.texture_color.clone());
 
-                    unsafe {
-                        gl::TexImage2D(
-                            TEXTURE_CUBE_MAP_POSITIVE_X + id as u32,
-                            0,
-                            internal_color,
-                            width,
-                            height,
-                            0,
-                            internal_color as u32,
-                            gl::UNSIGNED_BYTE,
-                            pixels.as_ptr() as *const _
-                        );
+                let internal_color = texture_settings.clone().texture_color as u32 as i32;
 
-                        for (k, v) in &texture_settings.parameters {
-                            gl::TexParameteri(TEXTURE_CUBE_MAP, *k, *v);
-                        }
+                unsafe {
+                    gl::TexImage2D(
+                        TEXTURE_CUBE_MAP_POSITIVE_X + id as u32,
+                        0,
+                        internal_color,
+                        width,
+                        height,
+                        0,
+                        internal_color as u32,
+                        gl::UNSIGNED_BYTE,
+                        pixels.as_ptr() as *const _,
+                    );
 
+                    for (k, v) in &texture_settings.parameters {
+                        gl::TexParameteri(TEXTURE_CUBE_MAP, *k, *v);
                     }
                 }
             }

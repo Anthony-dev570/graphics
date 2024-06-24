@@ -10,5 +10,9 @@ pub enum ImageObject {
         width: i32,
         height: i32,
         pixels: Vec<u8>
+    },
+    Null {
+        width: i32,
+        height: i32
     }
 }

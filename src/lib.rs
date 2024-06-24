@@ -12,8 +12,12 @@ pub mod a_or_b;
 pub mod model;
 pub mod bundled_model;
 pub mod bundled_mesh;
+pub mod frame_buffer;
+pub mod render_buffer;
 pub mod ui;
 pub mod ffi;
+
+pub mod render_texture;
 
 #[cfg(test)]
 mod tests {
