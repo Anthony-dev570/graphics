@@ -9,6 +9,7 @@ use crate::ui::style::{Style, StyleProperty, StyleValue};
 pub mod input_field;
 pub mod style;
 
+
 pub(crate) static mut FOCUS: Option<usize> = None;
 pub(crate) static mut UI_ELEMENTS: Vec<Box<dyn UI>> = vec![];
 
