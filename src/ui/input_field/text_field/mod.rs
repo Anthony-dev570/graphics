@@ -11,7 +11,8 @@ pub enum TextFilter {
     NumbersOnly,
     Alphanumeric,
     AlphaOnly,
-    Algebraic
+    Algebraic,
+    Label
 }
 
 pub struct TextFieldInner {

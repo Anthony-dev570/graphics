@@ -3,7 +3,7 @@ use mathematics::linear_algebra::vector::types::Vector2I32;
 
 use crate::atomic::Atomic;
 use crate::frame_buffer::FrameBuffer;
-use crate::program::{Program, ProgramInner};
+use crate::program::Program;
 use crate::render_buffer::buffer_format::BufferFormat;
 use crate::textures::texture::Texture;
 use crate::textures::texture_settings::TextureSettings;

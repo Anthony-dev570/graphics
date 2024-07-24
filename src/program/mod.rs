@@ -65,12 +65,19 @@ impl Program {
                             gl::AttachShader(id, fragment.id());
                             gl::LinkProgram(id);
                         }
-                        Err(e) => return Some(e)
+                        Err(e) => {
+                            return Some(e)
+                        }
                     }
                 }
-                Err(e) => return Some(e)
+                Err(e) => {
+                    return Some(e)
+                }
             }
             //check for errors
+            if let Some(error) = Self::check_for_errors(id) {
+                return Some(GraphicsError::ProgramError(error));
+            }
         }
         None
     }
@@ -92,11 +99,18 @@ impl Program {
         }
     }
 
+    pub fn uniform_location<T: ToString>(&self, name: T) -> i32 {
+        unsafe {
+            let name = CString::new(name.to_string()).unwrap();
+            let location = gl::GetUniformLocation(self.id(), name.as_ptr() as *const _ as *const _);
+            location
+        }
+    }
+
     pub fn bind_uniform<N: ToString, T, U: Uniform<T>>(&self, name: N, uniform: U) {
         unsafe {
             self.bind();
-            let name = CString::new(name.to_string()).unwrap();
-            let location = gl::GetUniformLocation(self.id(), name.as_ptr() as *const _ as *const _);
+            let location = self.uniform_location(name);
             uniform.bind_uniform(location);
         }
     }
@@ -105,9 +119,18 @@ impl Program {
         unsafe {
             self.bind();
             let uniform = uniform.0.lock().unwrap();
-            let name = CString::new(name.to_string()).unwrap();
-            let location = gl::GetUniformLocation(self.id(), name.as_ptr() as *const _ as *const _);
+            let location = self.uniform_location(name);
             uniform.bind_uniform(location);
         }
+    }
+
+    fn check_for_errors(program: u32) -> Option<String> {
+        unsafe {
+            let success = crate::ffi::get_program_iv(program, gl::LINK_STATUS);
+            if success != 1 {
+                return Some(crate::ffi::get_program_info_log(program, 512));
+            }
+        }
+        None
     }
 }

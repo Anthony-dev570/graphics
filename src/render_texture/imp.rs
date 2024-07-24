@@ -74,6 +74,10 @@ impl RenderTexture {
             }))))
     }
 
+    pub fn bind_texture(&self) {
+        self.0.0.lock().unwrap().get().texture.bind();
+    }
+
     pub fn initialize(&self) {
         self.0.0.lock().unwrap().initialize();
     }
@@ -91,6 +95,7 @@ impl RenderTexture {
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
             gl::Enable(gl::DEPTH_TEST);
             draw_fn();
+            gl::Disable(gl::DEPTH_TEST);
         }
         me.frame_buffer.unbind();
     }

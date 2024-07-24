@@ -44,7 +44,9 @@ pub fn process_mouse_click(
             let i = elements.len() - 1 - i;
 
             if elements[i].contains_point(mouse_position) {
-                elements[i].request_focus();
+                if elements[i].editable() {
+                    elements[i].request_focus();
+                }
                 elements[i].process_click(mouse_position, mouse);
                 //FOCUS = Some(elements[i].id());
                 return;
@@ -59,6 +61,14 @@ pub fn process_key(
 ) {
     if let Some(s) = get_focused() {
         s.process_key(key, action);
+    }
+}
+
+pub fn process_char(
+    char: char
+) {
+    if let Some(s) = get_focused() {
+        s.process_char(char);
     }
 }
 
@@ -77,6 +87,11 @@ pub trait UI {
 
     fn process_click(&self, _point: Vector2F32, _mouse_button: u32) {}
 
+    fn editable(&self) -> bool {
+        true
+    }
+
+    fn process_char(&self, char: char) {}
     fn process_key(&self, _key: u32, _action: u32) {}
 
     fn contains_point(&self, v: Vector2F32) -> bool {

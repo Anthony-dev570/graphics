@@ -10,10 +10,14 @@ use crate::ui::input_field::text_field::{TextField, TextFilter};
 use crate::ui::style::{Style, StyleProperty, StyleValue};
 use crate::ui::{FOCUS, send_lost_focus, UI, UI_ELEMENTS};
 
+const ENTER: &'static [u32] = &[257, 335];
+const BACKSPADE: u32 = 259;
+
 impl TextField {
     pub fn new_with_buffer<V: ToString>(value: V) -> Self {
         let out = Self::default();
         out.0.0.lock().unwrap().buffer = value.to_string();
+        out.evaluate();
         out
     }
 
@@ -23,6 +27,7 @@ impl TextField {
 
     pub fn with_filter(self, filter: TextFilter) -> Self {
         self.0.0.lock().unwrap().text_filter = Some(filter);
+        self.evaluate();
         self
     }
 
@@ -34,11 +39,16 @@ impl TextField {
         self.0.0.lock().unwrap().buffer.clone()
     }
 
+    pub fn set_text(&self, text: String) {
+        self.0.0.lock().unwrap().buffer = text;
+    }
+
     fn evaluate(&self) {
         if let Some(filter) = self.filter() {
             if filter == TextFilter::Algebraic {
                 let buffer = self.buffer();
-                if buffer.is_empty() {
+                if buffer.trim().is_empty() {
+                    self.0.0.lock().unwrap().buffer = "0".to_string();
                     return;
                 }
                 let ctx = aftermath::Context::new();
@@ -74,9 +84,56 @@ impl UI for TextField {
         self.0.0.lock().unwrap().has_error = false;
     }
 
+    fn editable(&self) -> bool {
+        if let Some(filter) = self.filter() {
+            return match filter {
+                TextFilter::Label => false,
+                _ => true
+            }
+        }
+        true
+    }
+
+    fn process_char(&self, char: char) {
+        let mut locked = self.0.0.lock().unwrap();
+        if let Some(filter) = &locked.text_filter {
+            let filter = match filter {
+                TextFilter::Algebraic => {
+                    let mut result = true;
+                    if char.is_numeric() {
+                        result = false;
+                    } else if ['.', '/', '+', '-', '*', '(', ')', '{', '}', '[', ']'].contains(&char) {
+                        result = false;
+                        // char.is_numeric() || !['.', '/', '+', '-', '*', '(', ')', '{', '}', '[', ']'].contains(&char)
+                    }
+                    result
+                },
+                TextFilter::NumbersOnly => !char.is_numeric(),
+                _ => true
+            };
+            if filter {
+                return;
+            }
+        }
+        locked.buffer.write_char(char);
+        println!("Buff: {}", locked.buffer);
+    }
+
     fn process_key(&self, key: u32, action: u32) {
-        let filter = self.0.0.lock().unwrap().text_filter.clone().unwrap_or(TextFilter::Alphanumeric);
-        if action == 1 || action == 2 {
+        if action == 1 {
+            if ENTER.contains(&key) {
+                self.evaluate();
+                //locked.evaluate();
+            } else if key == 259 {
+                let buffer = &mut self.0.0.lock().unwrap().buffer;
+                if buffer.len() > 0 {
+                    buffer.remove(buffer.len() - 1);
+                }
+            } else {
+                println!("unexpected: {key}");
+            }
+        }
+        /*if action == 1 || action == 2 {
             if key == 259 {
                 let buffer = &mut self.0.0.lock().unwrap().buffer;
                 if buffer.len() > 0 {
@@ -100,7 +157,7 @@ impl UI for TextField {
                                 let value = key - 320;
 
                                 value.to_string().chars().nth(0).unwrap()
-                            },
+                            }
                             330 => '.',
                             _ => key as u8 as char
                         };
@@ -123,7 +180,7 @@ impl UI for TextField {
                     }
                 }
             }
-        }
+        }*/
     }
 
     fn draw(&self, projection: &Mat4F32) {
@@ -154,8 +211,6 @@ impl UI for TextField {
 
         if let Some(font) = &self.0.0.lock().unwrap().font {
             let text_width = font.text_width(&text, FontType::Standard, 12_f32).unwrap();
-
-            //println!("{:?}", position);
 
             font.render_text(
                 text,

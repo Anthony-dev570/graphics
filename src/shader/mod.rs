@@ -21,4 +21,12 @@ pub trait Shader {
             gl::DeleteShader(id);
         }
     }
+
+    fn check_for_errors(shader: u32) -> Option<String> {
+        let status = crate::ffi::get_shader_iv(shader, gl::COMPILE_STATUS);
+        match status == 1 {
+            true => None,
+            false => Some(crate::ffi::get_shader_info_log(shader, 512))
+        }
+    }
 }

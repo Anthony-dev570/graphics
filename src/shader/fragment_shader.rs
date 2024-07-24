@@ -41,6 +41,12 @@ impl Shader for FragmentShader {
                 id: shader,
             };
 
+            if let Some(error) = Self::check_for_errors(shader) {
+                return Some(GraphicsError::ShaderError {
+                    shader_type: ShaderType::FragmentShader,
+                    error_text: error
+                });
+            }
             //todo, do error checking
         }
 

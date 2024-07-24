@@ -1,4 +1,4 @@
-use image::{DynamicImage, EncodableLayout, ImageResult};
+use image::{ColorType, DynamicImage, EncodableLayout, ImageResult};
 use crate::textures::image_object::ImageObject;
 use crate::textures::texture_color::TextureColor;
 
@@ -9,6 +9,10 @@ impl ImageObject {
                 image::open(path)
             }
             ImageObject::Image(image) => Ok(image),
+            ImageObject::Null {
+                width,
+                height
+            } => Ok(DynamicImage::new(width as u32, height as u32, ColorType::Rgb8)),
             _ => panic!("Not an image type.")
         }
     }

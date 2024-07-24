@@ -8,6 +8,7 @@ pub enum GraphicsError {
         shader_type: ShaderType,
         error_text: String
     },
+    ProgramError(String),
     ImageError(image::ImageError),
     FreeType(freetype::Error)
 }
